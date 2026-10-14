@@ -1,0 +1,297 @@
+﻿"No.","Story","Test level","Test type","Short Description","Preconditions","Steps to reproduce","Test Data","Expected Results","Rule&AC","State","Modules / Sub-Modules","Automation Status"
+"TC-01","US-04.02.01 | Comparison Rules Configuration","Component","API, Smoke, Regression","Verify successful creation of a Comparison Rule","1) Authenticated as an internal user with INPUT access to the `PF.COMPARISON.TYPE~MAIN` projection (`X-Company-Code: MOCK`).
+
+2) No existing `PF.COMPARISON.TYPE` record with `recordId` = `CMP_TC01_MINRATE`.","1) `POST tables/api/v1/projections/PF.COMPARISON.TYPE~MAIN/records/operations/INPUT` (endpoint inferred from the documented Table Template record-operation convention and the real PF.COMPARISON.TYPE schema; no live Bruno record-operation example exists yet for this projection — confirm exact contract before execution).","1) `{""recordId"": ""CMP_TC01_MINRATE"", ""data"": {""ID"": ""CMP_TC01_MINRATE"", ""COMPARISON_HANDLER_ID"": ""MINIMUM"", ""VALID_DATA_TYPES"": [""RATE""]}}`","1) Response status `201`. `response.data.ID` = `CMP_TC01_MINRATE`, `response.data.COMPARISON_HANDLER_ID` = `MINIMUM`, `response.data.VALID_DATA_TYPES` = `[""RATE""]`. The record is committed to `PF.COMPARISON.TYPE` and a success validation message is returned (no `errorIds`/`overrideIds` present).","AC1, AC7","","Product Factory Core - Negotiation Rules (PF.COMPARISON.TYPE)","Not Automated"
+"TC-02","US-04.02.01 | Comparison Rules Configuration","Component","API, Regression","Verify Comparison Rule creation prompts ID, Comparison Handler and Valid Data Types","1) Authenticated as an internal user with INPUT access to `PF.COMPARISON.TYPE~MAIN`.
+
+2) No existing record with `recordId` = `CMP_TC02_FIELDS`.","1) `POST tables/api/v1/projections/PF.COMPARISON.TYPE~MAIN/records/operations/INPUT` (endpoint inferred, see TC-01).","1) `{""recordId"": ""CMP_TC02_FIELDS"", ""data"": {""ID"": ""CMP_TC02_FIELDS"", ""COMPARISON_HANDLER_ID"": ""MAXIMUM"", ""VALID_DATA_TYPES"": [""AMOUNT""]}}`","1) Response status `201`. `response.data` contains `ID`, `COMPARISON_HANDLER_ID`, and `VALID_DATA_TYPES` exactly as submitted, proving the entry form accepted and persisted all three prompted fields.","AC1","","Product Factory Core - Negotiation Rules (PF.COMPARISON.TYPE)","Not Automated"
+"TC-03","US-04.02.01 | Comparison Rules Configuration","Component","API, Regression","Verify multiple Valid Data Types can be specified for one Comparison Rule","1) Authenticated as an internal user with INPUT access to `PF.COMPARISON.TYPE~MAIN`.
+
+2) No existing record with `recordId` = `CMP_TC03_MULTI`.","1) `POST tables/api/v1/projections/PF.COMPARISON.TYPE~MAIN/records/operations/INPUT` (endpoint inferred, see TC-01).","1) `{""recordId"": ""CMP_TC03_MULTI"", ""data"": {""ID"": ""CMP_TC03_MULTI"", ""COMPARISON_HANDLER_ID"": ""MINIMUM"", ""VALID_DATA_TYPES"": [""NUMERIC"", ""AMOUNT"", ""RATE""]}}`","1) Response status `201`. `response.data.VALID_DATA_TYPES` = `[""NUMERIC"", ""AMOUNT"", ""RATE""]` — all three values are accepted and persisted, proving the field allows multiple selections.","AC2","","Product Factory Core - Negotiation Rules (PF.COMPARISON.TYPE)","Not Automated"
+"TC-04","US-04.02.01 | Comparison Rules Configuration","Component","API, Regression","Verify Comparison Handler MINIMUM allows the full Valid Data Types set","1) Authenticated as an internal user with INPUT access to `PF.COMPARISON.TYPE~MAIN`.
+
+2) No existing record with `recordId` = `CMP_TC04_MIN_ALL`.","1) `POST tables/api/v1/projections/PF.COMPARISON.TYPE~MAIN/records/operations/INPUT` (endpoint inferred, see TC-01).","1) `{""recordId"": ""CMP_TC04_MIN_ALL"", ""data"": {""ID"": ""CMP_TC04_MIN_ALL"", ""COMPARISON_HANDLER_ID"": ""MINIMUM"", ""VALID_DATA_TYPES"": [""NUMERIC"", ""AMOUNT"", ""RATE"", ""DATE"", ""TIME"", ""DATE_TIME"", ""PERIOD""]}}`","1) Response status `201`. All seven Valid Data Types are accepted for `COMPARISON_HANDLER_ID = MINIMUM`, matching AC3's documented allowed set.","AC3","","Product Factory Core - Negotiation Rules (PF.COMPARISON.TYPE)","Not Automated"
+"TC-05","US-04.02.01 | Comparison Rules Configuration","Component","API, Regression","Verify Comparison Handler MAXIMUM allows the full Valid Data Types set","1) Authenticated as an internal user with INPUT access to `PF.COMPARISON.TYPE~MAIN`.
+
+2) No existing record with `recordId` = `CMP_TC05_MAX_ALL`.","1) `POST tables/api/v1/projections/PF.COMPARISON.TYPE~MAIN/records/operations/INPUT` (endpoint inferred, see TC-01).","1) `{""recordId"": ""CMP_TC05_MAX_ALL"", ""data"": {""ID"": ""CMP_TC05_MAX_ALL"", ""COMPARISON_HANDLER_ID"": ""MAXIMUM"", ""VALID_DATA_TYPES"": [""NUMERIC"", ""AMOUNT"", ""RATE"", ""DATE"", ""TIME"", ""DATE_TIME"", ""PERIOD""]}}`","1) Response status `201`. All seven Valid Data Types are accepted for `COMPARISON_HANDLER_ID = MAXIMUM`, matching AC3's documented allowed set.","AC3","","Product Factory Core - Negotiation Rules (PF.COMPARISON.TYPE)","Not Automated"
+"TC-06","US-04.02.01 | Comparison Rules Configuration","Component","API, Regression","Verify Comparison Handler DIFFERENCE restricts Valid Data Types to NUMERIC, AMOUNT, RATE, PERIOD","1) Authenticated as an internal user with INPUT access to `PF.COMPARISON.TYPE~MAIN`.
+
+2) No existing record with `recordId` = `CMP_TC06_DIFF`.","1) `POST tables/api/v1/projections/PF.COMPARISON.TYPE~MAIN/records/operations/INPUT` (endpoint inferred, see TC-01).","1) `{""recordId"": ""CMP_TC06_DIFF"", ""data"": {""ID"": ""CMP_TC06_DIFF"", ""COMPARISON_HANDLER_ID"": ""DIFFERENCE"", ""VALID_DATA_TYPES"": [""NUMERIC"", ""AMOUNT"", ""RATE"", ""PERIOD""]}}`","1) Response status `201`. All four non-temporal Valid Data Types are accepted for `COMPARISON_HANDLER_ID = DIFFERENCE`, matching AC4's documented allowed set.","AC4","","Product Factory Core - Negotiation Rules (PF.COMPARISON.TYPE)","Not Automated"
+"TC-07","US-04.02.01 | Comparison Rules Configuration","Component","API, Regression","Verify Comparison Handler TOLERANCE restricts Valid Data Types to NUMERIC, AMOUNT, RATE","1) Authenticated as an internal user with INPUT access to `PF.COMPARISON.TYPE~MAIN`.
+
+2) No existing record with `recordId` = `CMP_TC07_TOL`.","1) `POST tables/api/v1/projections/PF.COMPARISON.TYPE~MAIN/records/operations/INPUT` (endpoint inferred, see TC-01).","1) `{""recordId"": ""CMP_TC07_TOL"", ""data"": {""ID"": ""CMP_TC07_TOL"", ""COMPARISON_HANDLER_ID"": ""TOLERANCE"", ""VALID_DATA_TYPES"": [""NUMERIC"", ""AMOUNT"", ""RATE""]}}`","1) Response status `201`. All three Valid Data Types are accepted for `COMPARISON_HANDLER_ID = TOLERANCE`, matching AC5's documented allowed set.","AC5","","Product Factory Core - Negotiation Rules (PF.COMPARISON.TYPE)","Not Automated"
+"TC-08","US-04.02.01 | Comparison Rules Configuration","Component","API, Regression","Block Comparison Rule creation without an ID","1) Authenticated as an internal user with INPUT access to `PF.COMPARISON.TYPE~MAIN`.","1) `POST tables/api/v1/projections/PF.COMPARISON.TYPE~MAIN/records/operations/INPUT` (endpoint inferred, see TC-01).","1) `{""recordId"": ""CMP_TC08_NOID"", ""data"": {""COMPARISON_HANDLER_ID"": ""MINIMUM"", ""VALID_DATA_TYPES"": [""RATE""]}}` (no `ID` field).","1) Response status `422`. `errorIds` includes the ID-required rule; error message returned is `""ID is required.""`. No record is committed to `PF.COMPARISON.TYPE`.","BR-1 (AC8)","","Product Factory Core - Negotiation Rules (PF.COMPARISON.TYPE)","Not Automated"
+"TC-09","US-04.02.01 | Comparison Rules Configuration","Component","API, Regression","Block Comparison Rule creation without any Valid Data Type","1) Authenticated as an internal user with INPUT access to `PF.COMPARISON.TYPE~MAIN`.
+
+2) No existing record with `recordId` = `CMP_TC09_NODT`.","1) `POST tables/api/v1/projections/PF.COMPARISON.TYPE~MAIN/records/operations/INPUT` (endpoint inferred, see TC-01).","1) `{""recordId"": ""CMP_TC09_NODT"", ""data"": {""ID"": ""CMP_TC09_NODT"", ""COMPARISON_HANDLER_ID"": ""MINIMUM"", ""VALID_DATA_TYPES"": []}}`","1) Response status `422`. Error message returned is `""Valid Data Type is required.""`. No record is committed.","BR-2 (AC8)","","Product Factory Core - Negotiation Rules (PF.COMPARISON.TYPE)","Not Automated"
+"TC-10","US-04.02.01 | Comparison Rules Configuration","Component","API, Regression","Block Comparison Rule creation without a Comparison Handler","1) Authenticated as an internal user with INPUT access to `PF.COMPARISON.TYPE~MAIN`.
+
+2) No existing record with `recordId` = `CMP_TC10_NOHDLR`.","1) `POST tables/api/v1/projections/PF.COMPARISON.TYPE~MAIN/records/operations/INPUT` (endpoint inferred, see TC-01).","1) `{""recordId"": ""CMP_TC10_NOHDLR"", ""data"": {""ID"": ""CMP_TC10_NOHDLR"", ""VALID_DATA_TYPES"": [""RATE""]}}` (no `COMPARISON_HANDLER_ID` field).","1) Response status `422`. Error message returned is `""Comparison Handler is required.""`. No record is committed.","BR-3 (AC8)","","Product Factory Core - Negotiation Rules (PF.COMPARISON.TYPE)","Not Automated"
+"TC-11","US-04.02.01 | Comparison Rules Configuration","Component","API, Regression","Block DIFFERENCE handler with a temporal Valid Data Type","1) Authenticated as an internal user with INPUT access to `PF.COMPARISON.TYPE~MAIN`.
+
+2) No existing record with `recordId` = `CMP_TC11_DIFFDATE`.","1) `POST tables/api/v1/projections/PF.COMPARISON.TYPE~MAIN/records/operations/INPUT` (endpoint inferred, see TC-01).","1) `{""recordId"": ""CMP_TC11_DIFFDATE"", ""data"": {""ID"": ""CMP_TC11_DIFFDATE"", ""COMPARISON_HANDLER_ID"": ""DIFFERENCE"", ""VALID_DATA_TYPES"": [""NUMERIC"", ""DATE""]}}`","1) Response status `422`. Error message returned is `""Invalid Data Type for DIFFERENCE handler. Value cannot contain temporal values.""`. No record is committed.","BR-4 (AC4, AC8)","","Product Factory Core - Negotiation Rules (PF.COMPARISON.TYPE)","Not Automated"
+"TC-12","US-04.02.01 | Comparison Rules Configuration","Component","API, Regression","Block TOLERANCE handler with a temporal or period Valid Data Type","1) Authenticated as an internal user with INPUT access to `PF.COMPARISON.TYPE~MAIN`.
+
+2) No existing record with `recordId` = `CMP_TC12_TOLPERIOD`.","1) `POST tables/api/v1/projections/PF.COMPARISON.TYPE~MAIN/records/operations/INPUT` (endpoint inferred, see TC-01).","1) `{""recordId"": ""CMP_TC12_TOLPERIOD"", ""data"": {""ID"": ""CMP_TC12_TOLPERIOD"", ""COMPARISON_HANDLER_ID"": ""TOLERANCE"", ""VALID_DATA_TYPES"": [""NUMERIC"", ""PERIOD""]}}`","1) Response status `422`. Error message returned is `""Invalid Data Type for TOLERANCE handler. Value cannot contain temporal or period values.""`. No record is committed.","BR-5 (AC5, AC8)","","Product Factory Core - Negotiation Rules (PF.COMPARISON.TYPE)","Not Automated"
+"TC-13","US-04.02.01 | Comparison Rules Configuration","Component","API, Regression","Block modification of an already-created Comparison Rule","1) Authenticated as an internal user with INPUT access to `PF.COMPARISON.TYPE~MAIN`.
+
+2) A `PF.COMPARISON.TYPE` record with `recordId` = `CMP_TC13_IMMUT` already exists (created via `POST tables/api/v1/projections/PF.COMPARISON.TYPE~MAIN/records/operations/INPUT` with body `{""recordId"": ""CMP_TC13_IMMUT"", ""data"": {""ID"": ""CMP_TC13_IMMUT"", ""COMPARISON_HANDLER_ID"": ""MINIMUM"", ""VALID_DATA_TYPES"": [""RATE""]}}`).","1) `POST tables/api/v1/projections/PF.COMPARISON.TYPE~MAIN/records/operations/INPUT` against the existing `recordId` (endpoint inferred, see TC-01).","1) `{""recordId"": ""CMP_TC13_IMMUT"", ""data"": {""ID"": ""CMP_TC13_IMMUT"", ""COMPARISON_HANDLER_ID"": ""MAXIMUM"", ""VALID_DATA_TYPES"": [""RATE""]}}` (attempting to change `COMPARISON_HANDLER_ID` on the existing record).","1) Response status `422`. Error message returned is `""Comparison Rule is immutable after creation""`. The existing record's `COMPARISON_HANDLER_ID` remains `MINIMUM`, unchanged.","BR-6 (AC8)","","Product Factory Core - Negotiation Rules (PF.COMPARISON.TYPE)","Not Automated"
+"TC-14","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Smoke, Regression","Verify successful configuration of Condition-level negotiation rules","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN` (endpoint inferred, see module note above).
+
+2) A `PF.COMPARISON.TYPE` record with `recordId` = `CMP_TC14_MINRATE` exists and is active (`COMPARISON_HANDLER_ID: MINIMUM`, `VALID_DATA_TYPES: [""RATE""]`).
+
+3) No existing `PF.PRODUCT.INTEREST.CONDITION` record with `recordId` = `COND_TC14_HAPPY`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC14_HAPPY"", ""data"": {""ID"": ""COND_TC14_HAPPY"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": true, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": true, ""MANDATORY"": false, ""OVERRIDE"": true, ""RESET_OPTION"": true, ""COMPARISON_TYPE"": ""CMP_TC14_MINRATE"", ""THRESHOLD_VALUE"": ""0.0250"", ""BREACH_ACTION"": ""OVERRIDE""}]}}`","1) Response status `201`. `response.data` persists `DEFAULT_NEGOTIABLE`, `DEFAULT_RESET`, and the `NEGOTIATION_RULES` entry exactly as submitted; a success validation message is returned (no `errorIds`).","AC1, AC10","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-15","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Verify specifying Condition business fields prompts Negotiation fields","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) No existing record with `recordId` = `COND_TC15_PROMPT`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC15_PROMPT"", ""data"": {""ID"": ""COND_TC15_PROMPT"", ""GLOBAL_CALCULATION_RULE"": ""FLAT"", ""DEFAULT_NEGOTIABLE"": false, ""DEFAULT_RESET"": false}}`","1) Response status `201`. `response.data` accepts the `DEFAULT_NEGOTIABLE`/`DEFAULT_RESET` negotiation fields alongside the business field `GLOBAL_CALCULATION_RULE`, proving the negotiation section is offered once business fields are present.","AC1","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-16","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Verify Default flags permit omitting field-level negotiation info","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) No existing record with `recordId` = `COND_TC16_NOFIELDLVL`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC16_NOFIELDLVL"", ""data"": {""ID"": ""COND_TC16_NOFIELDLVL"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": false, ""NEGOTIATION_RULES"": []}}` (no field-level negotiation entries).","1) Response status `201`. Record commits successfully with an empty `NEGOTIATION_RULES` array, proving field-level negotiation entries are optional once the Default flags are set.","AC2","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-17","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Verify a specified business Field Name requires all four negotiation flags","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) No existing record with `recordId` = `COND_TC17_ALLFLAGS`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC17_ALLFLAGS"", ""data"": {""ID"": ""COND_TC17_ALLFLAGS"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": true, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": true, ""MANDATORY"": true, ""OVERRIDE"": false, ""RESET_OPTION"": false}]}}`","1) Response status `201`. All four flags (`NEGOTIABLE`, `MANDATORY`, `OVERRIDE`, `RESET_OPTION`) are accepted and persisted for `FIELD_NAME = PERIODIC_RATE`, proving the system requires and stores every flag once a Field Name is given.","AC3","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-18","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Verify Negotiability TRUE permits Mandatory TRUE","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) No existing record with `recordId` = `COND_TC18_MANDATORY`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC18_MANDATORY"", ""data"": {""ID"": ""COND_TC18_MANDATORY"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": true, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": true, ""MANDATORY"": true, ""OVERRIDE"": false, ""RESET_OPTION"": false}]}}`","1) Response status `201`. `NEGOTIATION_RULES[0].MANDATORY` = `true` is accepted and persisted alongside `NEGOTIABLE: true`.","AC4","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-19","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Verify Negotiability TRUE permits Override TRUE","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) No existing record with `recordId` = `COND_TC19_OVERRIDE`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC19_OVERRIDE"", ""data"": {""ID"": ""COND_TC19_OVERRIDE"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": true, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": true, ""MANDATORY"": false, ""OVERRIDE"": true, ""RESET_OPTION"": false}]}}`","1) Response status `201`. `NEGOTIATION_RULES[0].OVERRIDE` = `true` is accepted and persisted alongside `NEGOTIABLE: true`.","AC5","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-20","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Verify Negotiability TRUE permits Comparison info to be specified","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) A `PF.COMPARISON.TYPE` record with `recordId` = `CMP_TC20_MINRATE` exists and is active (`COMPARISON_HANDLER_ID: MINIMUM`, `VALID_DATA_TYPES: [""RATE""]`).
+
+3) No existing `PF.PRODUCT.INTEREST.CONDITION` record with `recordId` = `COND_TC20_CMPINFO`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC20_CMPINFO"", ""data"": {""ID"": ""COND_TC20_CMPINFO"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": true, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": true, ""MANDATORY"": false, ""OVERRIDE"": false, ""RESET_OPTION"": false, ""COMPARISON_TYPE"": ""CMP_TC20_MINRATE"", ""THRESHOLD_VALUE"": ""0.0150"", ""BREACH_ACTION"": ""ERROR""}]}}`","1) Response status `201`. `COMPARISON_TYPE`, `THRESHOLD_VALUE`, and `BREACH_ACTION` are all accepted and persisted for the negotiable field.","AC6","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-21","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Verify multiple distinct Comparison Types are permitted for the same negotiable field","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) Two `PF.COMPARISON.TYPE` records exist and are active: `CMP_TC21_MINRATE` (`COMPARISON_HANDLER_ID: MINIMUM`, `VALID_DATA_TYPES: [""RATE""]`) and `CMP_TC21_MAXRATE` (`COMPARISON_HANDLER_ID: MAXIMUM`, `VALID_DATA_TYPES: [""RATE""]`).
+
+3) No existing `PF.PRODUCT.INTEREST.CONDITION` record with `recordId` = `COND_TC21_MULTICMP`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC21_MULTICMP"", ""data"": {""ID"": ""COND_TC21_MULTICMP"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": true, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": true, ""MANDATORY"": false, ""OVERRIDE"": false, ""RESET_OPTION"": false, ""COMPARISON_TYPE"": ""CMP_TC21_MINRATE"", ""THRESHOLD_VALUE"": ""0.0100"", ""BREACH_ACTION"": ""ERROR""}, {""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": true, ""MANDATORY"": false, ""OVERRIDE"": false, ""RESET_OPTION"": false, ""COMPARISON_TYPE"": ""CMP_TC21_MAXRATE"", ""THRESHOLD_VALUE"": ""0.0500"", ""BREACH_ACTION"": ""OVERRIDE""}]}}`","1) Response status `201`. Both `NEGOTIATION_RULES` entries for `PERIODIC_RATE` (one per distinct `COMPARISON_TYPE`) are accepted and persisted.","AC7","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-22","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Block negotiation configuration on a field when Negotiability is FALSE","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) No existing record with `recordId` = `COND_TC22_NONNEG`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC22_NONNEG"", ""data"": {""ID"": ""COND_TC22_NONNEG"", ""DEFAULT_NEGOTIABLE"": false, ""DEFAULT_RESET"": false, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": false, ""MANDATORY"": true, ""OVERRIDE"": false, ""RESET_OPTION"": false}]}}` (attempting `MANDATORY: true` on a `NEGOTIABLE: false` field).","1) Response status `422`. Error message returned is `""Mutually exclusive negotiation options: MANDATORY value is not permitted on a NON_NEGOTIABLE field.""` (BR-5). No record is committed.","AC8, BR-5","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-23","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Block Condition creation without Default Negotiable or Default Reset flags","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) No existing record with `recordId` = `COND_TC23_NODEFAULT`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC23_NODEFAULT"", ""data"": {""ID"": ""COND_TC23_NODEFAULT""}}` (no `DEFAULT_NEGOTIABLE`/`DEFAULT_RESET`).","1) Response status `422`. Error message returned is `""Default flag is required.""`. No record is committed.","BR-1 (AC11)","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-24","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Block Condition creation when Field Name does not exist in the target Condition","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) No existing record with `recordId` = `COND_TC24_BADFIELD`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC24_BADFIELD"", ""data"": {""ID"": ""COND_TC24_BADFIELD"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": true, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""NON_EXISTENT_FIELD"", ""NEGOTIABLE"": true, ""MANDATORY"": false, ""OVERRIDE"": false, ""RESET_OPTION"": false}]}}`","1) Response status `422`. Error message returned is `""Specified field does not exist in the target Condition.""`. No record is committed.","BR-2 (AC11)","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-25","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Block Condition creation when Field Name refers to a negotiation field, not a business field","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) No existing record with `recordId` = `COND_TC25_NEGFIELD`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC25_NEGFIELD"", ""data"": {""ID"": ""COND_TC25_NEGFIELD"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": true, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""DEFAULT_NEGOTIABLE"", ""NEGOTIABLE"": true, ""MANDATORY"": false, ""OVERRIDE"": false, ""RESET_OPTION"": false}]}}` (`FIELD_NAME` points at the negotiation field `DEFAULT_NEGOTIABLE` itself, not a business field).","1) Response status `422`. Error message returned is `""Field-level negotiation rules can only be applied to condition business fields.""`. No record is committed.","BR-3 (AC11)","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-26","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Block Condition creation when Field Name is specified without all four negotiation flags","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) No existing record with `recordId` = `COND_TC26_PARTIALFLAGS`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC26_PARTIALFLAGS"", ""data"": {""ID"": ""COND_TC26_PARTIALFLAGS"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": true, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": true}]}}` (`MANDATORY`/`OVERRIDE`/`RESET_OPTION` omitted).","1) Response status `422`. Error message returned is `""Specifying a Field Name requires explicit definitions for its Negotiability, Mandatory, Override, and Reset Option flags.""`. No record is committed.","BR-4 (AC11)","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-27","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Block Override TRUE on a non-negotiable field","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) No existing record with `recordId` = `COND_TC27_NONNEGOVR`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC27_NONNEGOVR"", ""data"": {""ID"": ""COND_TC27_NONNEGOVR"", ""DEFAULT_NEGOTIABLE"": false, ""DEFAULT_RESET"": false, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": false, ""MANDATORY"": false, ""OVERRIDE"": true, ""RESET_OPTION"": false}]}}` (attempting `OVERRIDE: true` on a `NEGOTIABLE: false` field).","1) Response status `422`. Error message returned is `""Mutually exclusive negotiation options: OVERRIDE value is not permitted on a NON_NEGOTIABLE field.""`. No record is committed.","BR-6 (AC8, AC11)","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-28","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Block Comparison info specified on a non-negotiable field","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) A `PF.COMPARISON.TYPE` record with `recordId` = `CMP_TC28_MINRATE` exists and is active.
+
+3) No existing `PF.PRODUCT.INTEREST.CONDITION` record with `recordId` = `COND_TC28_NONNEGCMP`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC28_NONNEGCMP"", ""data"": {""ID"": ""COND_TC28_NONNEGCMP"", ""DEFAULT_NEGOTIABLE"": false, ""DEFAULT_RESET"": false, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": false, ""MANDATORY"": false, ""OVERRIDE"": false, ""RESET_OPTION"": false, ""COMPARISON_TYPE"": ""CMP_TC28_MINRATE"", ""THRESHOLD_VALUE"": ""0.0100"", ""BREACH_ACTION"": ""ERROR""}]}}` (Comparison info specified while `NEGOTIABLE: false`).","1) Response status `422`. Error message returned is `""Comparison information cannot be defined for a NON-NEGOTIABLE field.""`. No record is committed.","BR-7 (AC8, AC11)","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-29","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Block a Comparison Type whose Valid Data Types do not match the field's Data Type","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) A `PF.COMPARISON.TYPE` record with `recordId` = `CMP_TC29_DATEONLY` exists and is active, scoped strictly to `VALID_DATA_TYPES: [""DATE""]` (e.g. `COMPARISON_HANDLER_ID: MINIMUM`).
+
+3) No existing `PF.PRODUCT.INTEREST.CONDITION` record with `recordId` = `COND_TC29_TYPEMISMATCH`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC29_TYPEMISMATCH"", ""data"": {""ID"": ""COND_TC29_TYPEMISMATCH"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": true, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": true, ""MANDATORY"": false, ""OVERRIDE"": false, ""RESET_OPTION"": false, ""COMPARISON_TYPE"": ""CMP_TC29_DATEONLY"", ""THRESHOLD_VALUE"": ""2026-01-01"", ""BREACH_ACTION"": ""ERROR""}]}}` (`PERIODIC_RATE` is a `RATE`-typed field linked to a Comparison Type scoped to `DATE` only).","1) Response status `422`. Error message returned is `""The data type of the specified field is incompatible with the selected Comparison Type.""`. No record is committed.","BR-8 (AC11)","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-30","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Block Comparison Type specified without Threshold Value and Breach Action","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) A `PF.COMPARISON.TYPE` record with `recordId` = `CMP_TC30_MINRATE` exists and is active.
+
+3) No existing `PF.PRODUCT.INTEREST.CONDITION` record with `recordId` = `COND_TC30_NOTHRESHOLD`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC30_NOTHRESHOLD"", ""data"": {""ID"": ""COND_TC30_NOTHRESHOLD"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": true, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": true, ""MANDATORY"": false, ""OVERRIDE"": false, ""RESET_OPTION"": false, ""COMPARISON_TYPE"": ""CMP_TC30_MINRATE""}]}}` (`THRESHOLD_VALUE`/`BREACH_ACTION` omitted).","1) Response status `422`. Error message returned is `""Both Threshold Value and Breach Action must be specified alongside a Comparison Type.""`. No record is committed.","BR-9 (AC11)","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-31","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Block Threshold Value or Breach Action specified without a Comparison Type","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) No existing record with `recordId` = `COND_TC31_NOCMPTYPE`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC31_NOCMPTYPE"", ""data"": {""ID"": ""COND_TC31_NOCMPTYPE"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": true, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": true, ""MANDATORY"": false, ""OVERRIDE"": false, ""RESET_OPTION"": false, ""THRESHOLD_VALUE"": ""0.0100"", ""BREACH_ACTION"": ""ERROR""}]}}` (`COMPARISON_TYPE` omitted while `THRESHOLD_VALUE`/`BREACH_ACTION` are present).","1) Response status `422`. Error message returned is `""Comparison Type must be defined when a Threshold Value or Breach Action is present.""`. No record is committed.","BR-10 (AC11)","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-32","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Block a Threshold Value whose format does not match the target field's format","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) A `PF.COMPARISON.TYPE` record with `recordId` = `CMP_TC32_MINRATE` exists and is active (`VALID_DATA_TYPES: [""RATE""]`).
+
+3) No existing `PF.PRODUCT.INTEREST.CONDITION` record with `recordId` = `COND_TC32_BADFORMAT`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC32_BADFORMAT"", ""data"": {""ID"": ""COND_TC32_BADFORMAT"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": true, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": true, ""MANDATORY"": false, ""OVERRIDE"": false, ""RESET_OPTION"": false, ""COMPARISON_TYPE"": ""CMP_TC32_MINRATE"", ""THRESHOLD_VALUE"": ""NOT-A-RATE"", ""BREACH_ACTION"": ""ERROR""}]}}` (`THRESHOLD_VALUE` is not a valid `RATE`-formatted value for the `PERIODIC_RATE` field).","1) Response status `422`. Error message returned is `""Data type mismatch: Threshold Value format does not correspond to the target field type.""`. No record is committed.","BR-11 (AC11)","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-33","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Block a duplicate Comparison Type configured twice for the same field","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) A `PF.COMPARISON.TYPE` record with `recordId` = `CMP_TC33_MINRATE` exists and is active.
+
+3) No existing `PF.PRODUCT.INTEREST.CONDITION` record with `recordId` = `COND_TC33_DUPCMP`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC33_DUPCMP"", ""data"": {""ID"": ""COND_TC33_DUPCMP"", ""DEFAULT_NEGOTIABLE"": true, ""DEFAULT_RESET"": true, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": true, ""MANDATORY"": false, ""OVERRIDE"": false, ""RESET_OPTION"": false, ""COMPARISON_TYPE"": ""CMP_TC33_MINRATE"", ""THRESHOLD_VALUE"": ""0.0100"", ""BREACH_ACTION"": ""ERROR""}, {""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": true, ""MANDATORY"": false, ""OVERRIDE"": false, ""RESET_OPTION"": false, ""COMPARISON_TYPE"": ""CMP_TC33_MINRATE"", ""THRESHOLD_VALUE"": ""0.0200"", ""BREACH_ACTION"": ""OVERRIDE""}]}}` (same `COMPARISON_TYPE` configured twice for `PERIODIC_RATE`).","1) Response status `422`. Error message returned is `""The selected Comparison Type has already been configured for this field.""`. No record is committed.","BR-12 (AC11)","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-34","US-04.02.02 | Condition-Level Negotiation Governance","Component","API, Regression","Verify Save runs field-level, projection-level and logical validations for business and negotiation fields together","1) Authenticated as an internal user with INPUT access to `PF.PRODUCT.INTEREST.CONDITION~MAIN`.
+
+2) No existing record with `recordId` = `COND_TC34_BOTHFAIL`.","1) `POST tables/api/v1/projections/PF.PRODUCT.INTEREST.CONDITION~MAIN/records/operations/INPUT`.","1) `{""recordId"": ""COND_TC34_BOTHFAIL"", ""data"": {""ID"": ""COND_TC34_BOTHFAIL"", ""PERIODIC_RATE"": ""NOT-A-RATE"", ""DEFAULT_NEGOTIABLE"": false, ""DEFAULT_RESET"": false, ""NEGOTIATION_RULES"": [{""FIELD_NAME"": ""PERIODIC_RATE"", ""NEGOTIABLE"": false, ""MANDATORY"": true, ""OVERRIDE"": false, ""RESET_OPTION"": false}]}}` (an invalid business-field value for `PERIODIC_RATE` submitted together with a negotiation-field violation — `MANDATORY: true` on a non-negotiable field).","1) Response status `422`. `errorIds` includes both the business-field format violation and the negotiation-field rule violation (`""Mutually exclusive negotiation options: MANDATORY value is not permitted on a NON_NEGOTIABLE field.""`), proving both business-field and negotiation-field validations run together on Save. No record is committed.","AC9, AC11","","Product Factory Core - Attribute Class Condition (PF.PRODUCT.INTEREST.CONDITION)","Not Automated"
+"TC-35","US-04.02.03 | Contract-Product Linking and Mass Maintenance","Component","API, Smoke, Regression","Verify end-to-end Product creation, cataloging, and tracking-record generation for a TRACKING condition","1) Authenticated as an internal user with INPUT access to `PF.BUILDER~MAIN`, `PF.MANAGER~MAIN`.
+
+2) A Condition `COND-TC35-001` exists and is active for Attribute `INTEREST.RATE`.
+
+3) No existing `PF.BUILDER`/`PF.PRODUCT`/`PF.CATALOG` record with `recordId` = `TC35LOAN`.","1) `POST tables/api/v1/projections/PF.BUILDER~MAIN/records/operations/INPUT` — draft the product.
+
+2) `POST tables/api/v1/projections/PF.MANAGER~MAIN/records/operations/INPUT` — Validate + Catalog in one call.
+
+3) `POST tables/api/v1/projections/PF.CATALOG/records/operations/SEE` — confirm the product is cataloged.
+
+4) Modify Condition `COND-TC35-001`'s base rate and re-run steps 1–2 against `TC35LOAN` to publish a new Release.
+
+5) `POST tables/api/v1/projections/PF.PRODUCT.TRACKER~MAIN/records/operations/SEE` — check for a tracking record (endpoint inferred; no live Bruno example exists yet for this projection, confirm before execution).","1) `{""recordId"": ""TC35LOAN"", ""data"": {""DESCRIPTION"": {""en"": ""TC-35 smoke loan""}, ""PRODUCT_TYPE"": ""PERSONAL.LOANS"", ""PRODUCT_CURRENCIES"": [""XAF""], ""ATTRIBUTES"": [{""ATTRIBUTE"": ""INTEREST.RATE"", ""CONDITION"": ""COND-TC35-001"", ""CONTRACT_LINK_TYPE"": ""TRACKING""}]}}`
+
+2) `{""recordId"": ""TC35LOAN"", ""data"": {""ACTION"": ""VALIDATE"", ""COMBINE_ACTIONS"": true}}`
+
+3) `{""recordId"": ""TC35LOAN""}`
+
+4) Same shape as step 1/2, condition `COND-TC35-001` updated beforehand (its own base rate field changed) then re-Validate+Catalog `TC35LOAN` to force Release N+1.
+
+5) `{""recordId"": ""TC35LOAN""}` (or the query shape the real tracker projection uses once confirmed).","1) Response status `200`/`201`; `PF.PRODUCT` status = `DRAFT`.
+
+2) Response status `200`/`201`; `response.body.data.PRODUCT_STATUS` is not `VALIDATION_FAILED`; `RESOLVED_CONDITIONS` is present and non-null.
+
+3) Response status `200`; `response.body.data.STATUS` = `CATALOGED`; `PRODUCT_VERSION` ≥ 1.
+
+4) Response status `200`/`201`; `PRODUCT_VERSION` increments to N+1 in the subsequent `PF.CATALOG` SEE.
+
+5) A `PF.PRODUCT.TRACKER` record exists for `PRODUCT_ID = TC35LOAN` with `TRACKER_STATUS = PENDING` and `UPDATED_ATTRIBUTES` including `INTEREST.RATE`.","AC1, AC6","","Product Factory Core - Product Lifecycle (PF.BUILDER, PF.MANAGER, PF.CATALOG, PF.PRODUCT.TRACKER)","Not Automated"
+"TC-36","US-04.02.03 | Contract-Product Linking and Mass Maintenance","Component","API, Regression","Verify selecting a Condition in PF.BUILDER restricts Contract Link Type to TRACKING, NON.TRACKING, CUSTOM.TRACKING","1) Authenticated as an internal user with INPUT access to `PF.BUILDER~MAIN`.
+
+2) A Condition `COND-TC36-001` exists and is active for Attribute `INTEREST.RATE`.
+
+3) No existing `PF.BUILDER` record with `recordId` = `TC36LOAN`.","1) `POST tables/api/v1/projections/PF.BUILDER~MAIN/records/operations/INPUT`, submitting each of the three valid `CONTRACT_LINK_TYPE` values in turn for the same Condition (three sub-requests, one per value, each against its own `recordId`).
+
+2) Repeat step 1 with `CONTRACT_LINK_TYPE = ""INVALID_TYPE""`.","1) `{""recordId"": ""TC36LOAN_TRACKING""/""TC36LOAN_NONTRACKING""/""TC36LOAN_CUSTOMTRACKING"", ""data"": {""DESCRIPTION"": {""en"": ""TC-36 link type""}, ""PRODUCT_TYPE"": ""PERSONAL.LOANS"", ""PRODUCT_CURRENCIES"": [""XAF""], ""ATTRIBUTES"": [{""ATTRIBUTE"": ""INTEREST.RATE"", ""CONDITION"": ""COND-TC36-001"", ""CONTRACT_LINK_TYPE"": ""TRACKING""/""NON.TRACKING""/""CUSTOM.TRACKING""}]}}`
+
+2) `{""recordId"": ""TC36LOAN_INVALID"", ""data"": {""DESCRIPTION"": {""en"": ""TC-36 invalid link type""}, ""PRODUCT_TYPE"": ""PERSONAL.LOANS"", ""PRODUCT_CURRENCIES"": [""XAF""], ""ATTRIBUTES"": [{""ATTRIBUTE"": ""INTEREST.RATE"", ""CONDITION"": ""COND-TC36-001"", ""CONTRACT_LINK_TYPE"": ""INVALID_TYPE""}]}}`","1) Each of the three sub-requests returns status `200`/`201` and persists the submitted `CONTRACT_LINK_TYPE` value unchanged.
+
+2) Response status `422` — `CONTRACT_LINK_TYPE` is restricted to the fixed enum values `TRACKING`/`NON.TRACKING`/`CUSTOM.TRACKING`; the record is not committed.","AC1","","Product Factory Core - Product Lifecycle (PF.BUILDER, PF.MANAGER, PF.CATALOG, PF.PRODUCT.TRACKER)","Not Automated"
+"TC-37","US-04.02.03 | Contract-Product Linking and Mass Maintenance","Component","API, Regression","Verify modifying a Condition with a new Effective Date does not auto-update linked Cataloged Products","1) Authenticated as an internal user with INPUT access to `PF.BUILDER~MAIN`, `PF.MANAGER~MAIN`.
+
+2) Condition `COND-TC37-001` exists and is linked to an already-Cataloged Product `TC37LOAN` (drafted and Validated+Cataloged per TC-35's steps 1–2, Release 1).","1) Modify Condition `COND-TC37-001`, setting a new Effective Date on the condition record.
+
+2) `POST tables/api/v1/projections/PF.CATALOG/records/operations/SEE` for `TC37LOAN`, without running `PF.MANAGER` Validate/Catalog again.","1) Condition update body includes an `EFFECTIVE_DATE` field changed from its prior value to a new date (e.g. `2026-08-01`).
+
+2) `{""recordId"": ""TC37LOAN""}`","1) Condition update succeeds independently of the Product's catalog state.
+
+2) `PF.CATALOG`'s `TC37LOAN` record's `RESOLVED_CONDITIONS`/`PRODUCT_VERSION` remain exactly as they were at Release 1 — the Effective-Date change is not automatically reflected; a subsequent manual `Validate` + `Catalog` on `PF.MANAGER` is required for `TC37LOAN` to adopt it.","AC2","","Product Factory Core - Product Lifecycle (PF.BUILDER, PF.MANAGER, PF.CATALOG, PF.PRODUCT.TRACKER)","Not Automated"
+"TC-38","US-04.02.03 | Contract-Product Linking and Mass Maintenance","Component","API, Regression","Verify modifying a Condition without an Effective Date change does not auto-update linked Cataloged Products","1) Authenticated as an internal user with INPUT access to `PF.BUILDER~MAIN`, `PF.MANAGER~MAIN`.
+
+2) Condition `COND-TC38-001` exists and is linked to an already-Cataloged Product `TC38LOAN` (Release 1).","1) Modify Condition `COND-TC38-001` (e.g. its base rate value), leaving `EFFECTIVE_DATE` unchanged.
+
+2) `POST tables/api/v1/projections/PF.CATALOG/records/operations/SEE` for `TC38LOAN`, without running `PF.MANAGER` Validate/Catalog again.","1) Condition update body changes a non-date business field only.
+
+2) `{""recordId"": ""TC38LOAN""}`","1) Condition update succeeds independently of the Product's catalog state.
+
+2) `PF.CATALOG`'s `TC38LOAN` record remains at Release 1, unchanged — same as TC-37's outcome, confirming the block is unconditional on Effective Date.","AC3","","Product Factory Core - Product Lifecycle (PF.BUILDER, PF.MANAGER, PF.CATALOG, PF.PRODUCT.TRACKER)","Not Automated"
+"TC-39","US-04.02.03 | Contract-Product Linking and Mass Maintenance","Component","API, Regression","Verify a direct PF.BUILDER modification to an already-Cataloged Product does not auto-update PF.CATALOG","1) Authenticated as an internal user with INPUT access to `PF.BUILDER~MAIN`.
+
+2) Product `TC39LOAN` already exists in `PF.CATALOG` (Release 1, per TC-35's steps 1–2).","1) `POST tables/api/v1/projections/PF.BUILDER~MAIN/records/operations/INPUT` — modify the `TC39LOAN` sandbox record directly (e.g. change `DESCRIPTION`), without a subsequent `PF.MANAGER` Validate/Catalog call.
+
+2) `POST tables/api/v1/projections/PF.CATALOG/records/operations/SEE` for `TC39LOAN`.","1) `{""recordId"": ""TC39LOAN"", ""data"": {""DESCRIPTION"": {""en"": ""TC-39 direct builder edit""}, ""PRODUCT_TYPE"": ""PERSONAL.LOANS"", ""PRODUCT_CURRENCIES"": [""XAF""], ""ATTRIBUTES"": [{""ATTRIBUTE"": ""INTEREST.RATE"", ""CONDITION"": ""COND-TC39-001"", ""CONTRACT_LINK_TYPE"": ""TRACKING""}]}}`
+
+2) `{""recordId"": ""TC39LOAN""}`","1) Response status `200`/`201`; the `PF.BUILDER` sandbox record reflects the new `DESCRIPTION`.
+
+2) `PF.CATALOG`'s `TC39LOAN` record's `DESCRIPTION`/`PRODUCT_VERSION` remain at Release 1, unchanged — the direct Builder edit is not automatically reflected in the Catalog; manual `Validate` + `Catalog` in `PF.MANAGER` is required.","AC4","","Product Factory Core - Product Lifecycle (PF.BUILDER, PF.MANAGER, PF.CATALOG, PF.PRODUCT.TRACKER)","Not Automated"
+"TC-40","US-04.02.03 | Contract-Product Linking and Mass Maintenance","Component","API, Regression","Verify cataloging a new Release evaluates tracking configuration for the updated Product","1) Authenticated as an internal user with INPUT access to `PF.BUILDER~MAIN`, `PF.MANAGER~MAIN`.
+
+2) Condition `COND-TC40-001` (Contract Link Type `TRACKING`) already linked to Cataloged Product `TC40LOAN` (Release 1).","1) Modify Condition `COND-TC40-001`'s base rate.
+
+2) `POST tables/api/v1/projections/PF.MANAGER~MAIN/records/operations/INPUT` — Validate + Catalog `TC40LOAN` (Release 2).
+
+3) `POST tables/api/v1/projections/PF.PRODUCT.TRACKER~MAIN/records/operations/SEE` (endpoint inferred, see TC-35 step 5) — check tracking evaluation occurred.","1) Condition base-rate field changed.
+
+2) `{""recordId"": ""TC40LOAN"", ""data"": {""ACTION"": ""VALIDATE"", ""COMBINE_ACTIONS"": true}}`
+
+3) `{""recordId"": ""TC40LOAN""}` (or the real tracker query shape once confirmed).","1) Condition update succeeds.
+
+2) Response status `200`/`201`; `PF.CATALOG`'s `TC40LOAN` `PRODUCT_VERSION` increments to 2.
+
+3) The system has evaluated `COND-TC40-001`'s `CONTRACT_LINK_TYPE` for this Release — proven by a corresponding `PF.PRODUCT.TRACKER` record existing for `TC40LOAN` (see TC-41 for the record's exact expected shape).","AC5","","Product Factory Core - Product Lifecycle (PF.BUILDER, PF.MANAGER, PF.CATALOG, PF.PRODUCT.TRACKER)","Not Automated"
+"TC-41","US-04.02.03 | Contract-Product Linking and Mass Maintenance","Component","API, Regression","Verify a TRACKING Condition's change on a new Release creates a PF.PRODUCT.TRACKER record","1) Authenticated as an internal user with INPUT access to `PF.BUILDER~MAIN`, `PF.MANAGER~MAIN`.
+
+2) Condition `COND-TC41-001` (Contract Link Type `TRACKING`) linked to Cataloged Product `TC41LOAN` (Release 1).","1) Modify Condition `COND-TC41-001`'s base rate.
+
+2) `POST tables/api/v1/projections/PF.MANAGER~MAIN/records/operations/INPUT` — Validate + Catalog `TC41LOAN` (Release 2).
+
+3) `POST tables/api/v1/projections/PF.PRODUCT.TRACKER~MAIN/records/operations/SEE` for the generated tracker record (endpoint inferred; no live Bruno example exists yet for this projection — confirm before execution).","1) Condition base-rate field changed.
+
+2) `{""recordId"": ""TC41LOAN"", ""data"": {""ACTION"": ""VALIDATE"", ""COMBINE_ACTIONS"": true}}`
+
+3) `{""recordId"": ""TC41LOAN""}` (or the real tracker query shape once confirmed).","1) Condition update succeeds.
+
+2) Response status `200`/`201`; Release increments to 2.
+
+3) A single `PF.PRODUCT.TRACKER` record exists with `PRODUCT_ID = TC41LOAN`, `TRACKER_STATUS = PENDING`, and `UPDATED_ATTRIBUTES` including `INTEREST.RATE`.","AC6","","Product Factory Core - Product Lifecycle (PF.BUILDER, PF.MANAGER, PF.CATALOG, PF.PRODUCT.TRACKER)","Not Automated"
+"TC-42","US-04.02.03 | Contract-Product Linking and Mass Maintenance","Component","API, Regression","Verify a CUSTOM_TRACKING Condition's change on a new Release creates a PF.PRODUCT.TRACKER record","1) Authenticated as an internal user with INPUT access to `PF.BUILDER~MAIN`, `PF.MANAGER~MAIN`.
+
+2) Condition `COND-TC42-001` (Contract Link Type `CUSTOM.TRACKING`) linked to Cataloged Product `TC42LOAN` (Release 1).","1) Modify Condition `COND-TC42-001`'s base rate (a non-negotiated field).
+
+2) `POST tables/api/v1/projections/PF.MANAGER~MAIN/records/operations/INPUT` — Validate + Catalog `TC42LOAN` (Release 2).
+
+3) `POST tables/api/v1/projections/PF.PRODUCT.TRACKER~MAIN/records/operations/SEE` for the generated tracker record (endpoint inferred, see TC-41).","1) Condition base-rate field changed.
+
+2) `{""recordId"": ""TC42LOAN"", ""data"": {""ACTION"": ""VALIDATE"", ""COMBINE_ACTIONS"": true}}`
+
+3) `{""recordId"": ""TC42LOAN""}` (or the real tracker query shape once confirmed).","1) Condition update succeeds.
+
+2) Response status `200`/`201`; Release increments to 2.
+
+3) A single `PF.PRODUCT.TRACKER` record exists with `PRODUCT_ID = TC42LOAN`, `TRACKER_STATUS = PENDING`, and `UPDATED_ATTRIBUTES` including `INTEREST.RATE` — proving `CUSTOM_TRACKING` (like `TRACKING`) registers non-negotiated field changes for propagation.","AC6","","Product Factory Core - Product Lifecycle (PF.BUILDER, PF.MANAGER, PF.CATALOG, PF.PRODUCT.TRACKER)","Not Automated"
+"TC-43","US-04.02.03 | Contract-Product Linking and Mass Maintenance","Component","API, Regression","Verify a NON_TRACKING Condition's change on a new Release does not create a PF.PRODUCT.TRACKER record","1) Authenticated as an internal user with INPUT access to `PF.BUILDER~MAIN`, `PF.MANAGER~MAIN`.
+
+2) Condition `COND-TC43-001` (Contract Link Type `NON.TRACKING`) linked to Cataloged Product `TC43LOAN` (Release 1).","1) Modify Condition `COND-TC43-001`'s base rate.
+
+2) `POST tables/api/v1/projections/PF.MANAGER~MAIN/records/operations/INPUT` — Validate + Catalog `TC43LOAN` (Release 2).
+
+3) `POST tables/api/v1/projections/PF.PRODUCT.TRACKER~MAIN/records/operations/SEE` filtered for `PRODUCT_ID = TC43LOAN` (endpoint inferred, see TC-41).","1) Condition base-rate field changed.
+
+2) `{""recordId"": ""TC43LOAN"", ""data"": {""ACTION"": ""VALIDATE"", ""COMBINE_ACTIONS"": true}}`
+
+3) Query/SEE against `PF.PRODUCT.TRACKER~MAIN` filtered by `PRODUCT_ID = TC43LOAN` (exact filter shape to be confirmed once the projection is documented).","1) Condition update succeeds.
+
+2) Response status `200`/`201`; Release increments to 2.
+
+3) No `PF.PRODUCT.TRACKER` record exists for `TC43LOAN` — the system bypasses tracking-record generation for a `NON_TRACKING` condition.","AC7","","Product Factory Core - Product Lifecycle (PF.BUILDER, PF.MANAGER, PF.CATALOG, PF.PRODUCT.TRACKER)","Not Automated"
+"TC-44","US-04.02.03 | Contract-Product Linking and Mass Maintenance","Component","API, Regression","Restrict tracking database updates in PF.PRODUCT.TRACKER for a NON_TRACKING condition upon new Release","1) Authenticated as an internal user with INPUT access to `PF.BUILDER~MAIN`, `PF.MANAGER~MAIN`.
+
+2) Condition `COND-TC44-001` (Contract Link Type `NON.TRACKING`) linked to Cataloged Product `TC44LOAN` (Release 1).
+
+3) No pre-existing `PF.PRODUCT.TRACKER` record for `TC44LOAN`.","1) Modify Condition `COND-TC44-001`'s base rate.
+
+2) `POST tables/api/v1/projections/PF.MANAGER~MAIN/records/operations/INPUT` — Validate + Catalog `TC44LOAN` (Release 2).
+
+3) `POST tables/api/v1/projections/PF.PRODUCT.TRACKER~MAIN/records/operations/SEE` filtered for `PRODUCT_ID = TC44LOAN` (endpoint inferred, see TC-41).","1) Condition base-rate field changed.
+
+2) `{""recordId"": ""TC44LOAN"", ""data"": {""ACTION"": ""VALIDATE"", ""COMBINE_ACTIONS"": true}}`
+
+3) Query/SEE against `PF.PRODUCT.TRACKER~MAIN` filtered by `PRODUCT_ID = TC44LOAN`.","1) Condition update succeeds.
+
+2) Response status `200`/`201`; Release increments to 2.
+
+3) The tracker query returns zero records for `TC44LOAN` both before and after the Release — no `PF.PRODUCT.TRACKER` write ever occurs for a condition restricted to `NON_TRACKING`, per BR-1.","BR-1 (AC7)","","Product Factory Core - Product Lifecycle (PF.BUILDER, PF.MANAGER, PF.CATALOG, PF.PRODUCT.TRACKER)","Not Automated"
+"TC-45","US-04.02.03 | Contract-Product Linking and Mass Maintenance","Component","API, Regression","Verify updating a NON_TRACKING Condition leaves existing subscribed contract terms unchanged (Alt 2)","1) Authenticated as an internal user with INPUT access to `PF.BUILDER~MAIN`, `PF.MANAGER~MAIN`.
+
+2) Condition `COND-TC45-001` (Contract Link Type `NON.TRACKING`) linked to Cataloged Product `TC45LOAN` (Release 1), with its base rate captured as `snapshot_rate_v1`.","1) Modify Condition `COND-TC45-001`'s base rate to a new value.
+
+2) `POST tables/api/v1/projections/PF.MANAGER~MAIN/records/operations/INPUT` — Validate + Catalog `TC45LOAN` (Release 2).
+
+3) `POST tables/api/v1/projections/PF.CATALOG/records/operations/SEE` for `TC45LOAN` — compare the catalogued condition's resolved rate to `snapshot_rate_v1`.","1) Condition base-rate field changed from `snapshot_rate_v1` to a new value.
+
+2) `{""recordId"": ""TC45LOAN"", ""data"": {""ACTION"": ""VALIDATE"", ""COMBINE_ACTIONS"": true}}`
+
+3) `{""recordId"": ""TC45LOAN""}`","1) Condition update succeeds.
+
+2) Response status `200`/`201`; Release increments to 2 at the Product-definition level.
+
+3) `PF.CATALOG`'s `TC45LOAN` `RESOLVED_CONDITIONS` for this attribute still reflects `snapshot_rate_v1` (the `NON_TRACKING` link means the evaluation after Catalog bypasses generating a tracking entry, leaving the resolved condition — and by extension any already-subscribed contract term — unchanged by the master update).","ALT-2 (AC7)","","Product Factory Core - Product Lifecycle (PF.BUILDER, PF.MANAGER, PF.CATALOG, PF.PRODUCT.TRACKER)","Not Automated"
+"TC-46","US-04.02.03 | Contract-Product Linking and Mass Maintenance","Component","API, Regression","Verify a direct PF.BUILDER modification still goes through standard lifecycle and tracking evaluation once published","1) Authenticated as an internal user with INPUT access to `PF.BUILDER~MAIN`, `PF.MANAGER~MAIN`.
+
+2) Condition `COND-TC46-001` (Contract Link Type `TRACKING`) linked to Cataloged Product `TC46LOAN` (Release 1).","1) `POST tables/api/v1/projections/PF.BUILDER~MAIN/records/operations/INPUT` — modify `TC46LOAN`'s sandbox record directly (e.g. change `DESCRIPTION`) without touching the Condition itself.
+
+2) `POST tables/api/v1/projections/PF.MANAGER~MAIN/records/operations/INPUT` — Validate + Catalog `TC46LOAN` (Release 2).
+
+3) `POST tables/api/v1/projections/PF.CATALOG/records/operations/SEE` for `TC46LOAN`.
+
+4) `POST tables/api/v1/projections/PF.PRODUCT.TRACKER~MAIN/records/operations/SEE` filtered for `PRODUCT_ID = TC46LOAN` (endpoint inferred, see TC-41).","1) `{""recordId"": ""TC46LOAN"", ""data"": {""DESCRIPTION"": {""en"": ""TC-46 direct builder edit""}, ""PRODUCT_TYPE"": ""PERSONAL.LOANS"", ""PRODUCT_CURRENCIES"": [""XAF""], ""ATTRIBUTES"": [{""ATTRIBUTE"": ""INTEREST.RATE"", ""CONDITION"": ""COND-TC46-001"", ""CONTRACT_LINK_TYPE"": ""TRACKING""}]}}`
+
+2) `{""recordId"": ""TC46LOAN"", ""data"": {""ACTION"": ""VALIDATE"", ""COMBINE_ACTIONS"": true}}`
+
+3) `{""recordId"": ""TC46LOAN""}`
+
+4) Query/SEE against `PF.PRODUCT.TRACKER~MAIN` filtered by `PRODUCT_ID = TC46LOAN`.","1) Response status `200`/`201`; the `PF.BUILDER` sandbox record reflects the new `DESCRIPTION`, still requiring the standard lifecycle to reach the Catalog (per TC-39).
+
+2) Response status `200`/`201`; Release increments to 2.
+
+3) `PF.CATALOG`'s `TC46LOAN` `DESCRIPTION`/`PRODUCT_VERSION` now reflect the new Release.
+
+4) The system evaluates `COND-TC46-001`'s `TRACKING` link type for this new Release the same way as any master-condition-triggered Release — proven by a `PF.PRODUCT.TRACKER` record existing for `TC46LOAN` with `TRACKER_STATUS = PENDING`, exactly as it would for a Condition-first change (TC-41).","ALT-3 (AC4, AC5)","","Product Factory Core - Product Lifecycle (PF.BUILDER, PF.MANAGER, PF.CATALOG, PF.PRODUCT.TRACKER)","Not Automated"

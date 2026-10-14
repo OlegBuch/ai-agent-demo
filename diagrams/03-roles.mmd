@@ -1,0 +1,37 @@
+%%{init: {'themeVariables': {'fontSize': '22px'}}}%%
+flowchart LR
+    subgraph design["Design conversation"]
+        Analyst["Business<br/>Analyst"]
+        Architect["Solution<br/>Architect"]
+        AqaLead["AQA<br/>Lead"]
+        ManualQa["Manual<br/>QA"]
+        Aqa["Full Stack<br/>AQA"]
+    end
+
+    Analyst --- Architect
+    Analyst --- ManualQa
+    Analyst --- AqaLead
+    Architect --- Aqa
+    Architect --- ManualQa
+    Architect --- AqaLead
+    AqaLead --- Aqa
+    AqaLead --- ManualQa
+    Aqa --- ManualQa
+
+    subgraph reviewers["Review-only lenses"]
+        CodeStyle["Code Style<br/>Reviewer"]
+        Skeptic["Change Justification<br/>Reviewer"]
+    end
+
+    CodeStyle -- flags --> AqaLead
+    CodeStyle -- "hands off" --> Aqa
+    CodeStyle -- supplies --> Skeptic
+    Skeptic -- challenges --> Aqa
+    Skeptic -- challenges --> AqaLead
+
+    AiArchitect["AI<br/>Architect"]
+    Pm["Project<br/>Manager"]
+    User(("User"))
+
+    AiArchitect -- "needs approval" --> User
+    Pm -- "sole source" --> User

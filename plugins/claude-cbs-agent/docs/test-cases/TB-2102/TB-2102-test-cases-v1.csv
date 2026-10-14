@@ -1,0 +1,65 @@
+﻿"No.","Story","Test level","Test type","Short Description","Preconditions","Steps to reproduce","Test Data","Expected Results","Rule&AC","State","Modules / Sub-Modules","Automation Status"
+"TC-24","US-01.04.02 | Core & Local Artifact Governance","Component","API","Verify a CORE INT table's policies can be set once from empty, then blocks any further update","1) Table CORE_INT_REF_DATA is registered in the Table Registry with origin = ""CORE"", classification = ""INT"", group = {""id"": 1}, spaces = [""LIV"", ""HIS""], and an empty policies list ([]).
+
+2) The Actor holds administrative MODIFY privileges for the Table Registry.","1) PUT {{table-registry-url}}/api/v1/tables/CORE_INT_REF_DATA
+
+2) GET {{table-registry-url}}/api/v1/tables/CORE_INT_REF_DATA
+
+3) PUT {{table-registry-url}}/api/v1/tables/CORE_INT_REF_DATA","1) {""group"":{""id"":1},""policies"":[{""type"":""IDENTIFIER_GENERATION"",""config"":{""rules"":[{""condition"":{""type"":""PREDICATE"",""key"":""context.company.id"",""operator"":""EQ"",""values"":[""*""]},""result"":{""isEnforced"":true,""prefix"":""{TABLE}-{YYDDD}-"",""maxLength"":40,""strategy"":{""type"":""SEQUENTIAL"",""config"":{""startValue"":1000}}}}]}}]}
+
+2) N/A — read-only GET, no request body.
+
+3) {""group"":{""id"":1},""policies"":[{""type"":""IDENTIFIER_GENERATION"",""config"":{""rules"":[{""condition"":{""type"":""PREDICATE"",""key"":""context.company.id"",""operator"":""EQ"",""values"":[""*""]},""result"":{""isEnforced"":true,""prefix"":""UK-"",""maxLength"":40,""strategy"":{""type"":""HIGH_TPS_UNIQUE"",""config"":{""allowedCharacters"":""ABCDEFGHJKLMNPQRSTUVWXYZ23456789""}}}}]}}]}","1) Response status code is 200. The system permits the first policies update on CORE_INT_REF_DATA — its policies list was empty, so Exception 3 / AC 8 apply — and proceeds with the policy-update logic owned by US-01.09.04.
+
+2) Response status code is 200. The returned policies[0].config.rules array contains exactly the one SEQUENTIAL rule submitted in Step 1, with condition.values = [""*""] preserved, confirming the INT wildcard rule persisted unchanged.
+
+3) Response status code is 400. The system blocks the second policies update because CORE_INT_REF_DATA's classification is INT and its identifier-generation policy is no longer empty. The table's policies remain identical to the value observed in Step 2 (verified via a follow-up GET).","AC 8, Alt 4, Exception 3","","Table Registry","Not Automated"
+"TC-25","US-01.04.02 | Core & Local Artifact Governance","Component","API","Verify a CORE FIN table's policies accept a new Lead Company rule but block changes to an already-covered company","1) Table CORE_FIN_LEDGER is registered with origin = ""CORE"", classification = ""FIN"", group = {""id"": 1}, spaces = [""NAU"", ""LIV"", ""HIS""], and a policies list already containing one IDENTIFIER_GENERATION rule scoped to Lead Company COMPANY_A (SEQUENTIAL strategy, prefix ""{TABLE}-{YYDDD}-"", startValue 1000).
+
+2) Lead Companies COMPANY_A and COMPANY_UK are both registered and active in the COMPANY table.
+
+3) The Actor holds administrative MODIFY privileges for the Table Registry.","1) PUT {{table-registry-url}}/api/v1/tables/CORE_FIN_LEDGER — add a rule for the new, not-yet-covered company COMPANY_UK alongside the existing COMPANY_A rule
+
+2) GET {{table-registry-url}}/api/v1/tables/CORE_FIN_LEDGER
+
+3) PUT {{table-registry-url}}/api/v1/tables/CORE_FIN_LEDGER — attempt to change the already-covered COMPANY_A rule's strategy, resubmitting COMPANY_UK unchanged","1) {""group"":{""id"":1},""policies"":[{""type"":""IDENTIFIER_GENERATION"",""config"":{""rules"":[{""condition"":{""type"":""PREDICATE"",""key"":""context.company.id"",""operator"":""EQ"",""values"":[""COMPANY_A""]},""result"":{""isEnforced"":true,""prefix"":""{TABLE}-{YYDDD}-"",""maxLength"":40,""strategy"":{""type"":""SEQUENTIAL"",""config"":{""startValue"":1000}}}},{""condition"":{""type"":""PREDICATE"",""key"":""context.company.id"",""operator"":""EQ"",""values"":[""COMPANY_UK""]},""result"":{""isEnforced"":true,""prefix"":""UK-"",""maxLength"":40,""strategy"":{""type"":""HIGH_TPS_UNIQUE"",""config"":{""allowedCharacters"":""ABCDEFGHJKLMNPQRSTUVWXYZ23456789""}}}}]}}]}
+
+2) N/A — read-only GET, no request body.
+
+3) {""group"":{""id"":1},""policies"":[{""type"":""IDENTIFIER_GENERATION"",""config"":{""rules"":[{""condition"":{""type"":""PREDICATE"",""key"":""context.company.id"",""operator"":""EQ"",""values"":[""COMPANY_A""]},""result"":{""isEnforced"":true,""prefix"":""{TABLE}-{YYDDD}-"",""maxLength"":40,""strategy"":{""type"":""HIGH_TPS_UNIQUE"",""config"":{""allowedCharacters"":""ABCDEFGHJKLMNPQRSTUVWXYZ23456789""}}}},{""condition"":{""type"":""PREDICATE"",""key"":""context.company.id"",""operator"":""EQ"",""values"":[""COMPANY_UK""]},""result"":{""isEnforced"":true,""prefix"":""UK-"",""maxLength"":40,""strategy"":{""type"":""HIGH_TPS_UNIQUE"",""config"":{""allowedCharacters"":""ABCDEFGHJKLMNPQRSTUVWXYZ23456789""}}}}]}}]}","1) Response status code is 200. The system permits adding the COMPANY_UK rule because COMPANY_UK was not yet covered by any existing rule on CORE_FIN_LEDGER.
+
+2) Response status code is 200. policies[0].config.rules contains exactly 2 entries: the pre-existing COMPANY_A rule (SEQUENTIAL, unchanged) and the new COMPANY_UK rule (HIGH_TPS_UNIQUE).
+
+3) Response status code is 400. The system blocks the attempt because COMPANY_A is already covered by an existing rule. policies remain identical to the value observed in Step 2 — COMPANY_A's strategy is still SEQUENTIAL.","AC 8, Alt 4, Exception 3","","Table Registry","Not Automated"
+"TC-26","US-01.04.02 | Core & Local Artifact Governance","Component","API","Verify a LOCAL INT table's policies can be set once from empty, then blocks any further update","1) Table LOCAL_INT_STAGING is registered in the Table Registry with origin = ""LOCAL"", classification = ""INT"", group = {""id"": 1}, spaces = [""LIV"", ""HIS""], and an empty policies list ([]).
+
+2) The Actor holds administrative MODIFY privileges for the Table Registry.","1) PUT {{table-registry-url}}/api/v1/tables/LOCAL_INT_STAGING
+
+2) GET {{table-registry-url}}/api/v1/tables/LOCAL_INT_STAGING
+
+3) PUT {{table-registry-url}}/api/v1/tables/LOCAL_INT_STAGING","1) {""group"":{""id"":1},""policies"":[{""type"":""IDENTIFIER_GENERATION"",""config"":{""rules"":[{""condition"":{""type"":""PREDICATE"",""key"":""context.company.id"",""operator"":""EQ"",""values"":[""*""]},""result"":{""isEnforced"":true,""prefix"":""{TABLE}-{YYDDD}-"",""maxLength"":40,""strategy"":{""type"":""SEQUENTIAL"",""config"":{""startValue"":1000}}}}]}}]}
+
+2) N/A — read-only GET, no request body.
+
+3) {""group"":{""id"":1},""policies"":[{""type"":""IDENTIFIER_GENERATION"",""config"":{""rules"":[{""condition"":{""type"":""PREDICATE"",""key"":""context.company.id"",""operator"":""EQ"",""values"":[""*""]},""result"":{""isEnforced"":true,""prefix"":""UK-"",""maxLength"":40,""strategy"":{""type"":""HIGH_TPS_UNIQUE"",""config"":{""allowedCharacters"":""ABCDEFGHJKLMNPQRSTUVWXYZ23456789""}}}}]}}]}","1) Response status code is 200. The system permits the first policies update on LOCAL_INT_STAGING — its policies list was empty, so Exception 4 / AC 8 apply — and proceeds with the policy-update logic owned by US-01.09.04.
+
+2) Response status code is 200. The returned policies[0].config.rules array contains exactly the one SEQUENTIAL rule submitted in Step 1, with condition.values = [""*""] preserved, confirming the INT wildcard rule persisted unchanged.
+
+3) Response status code is 400. The system blocks the second policies update because LOCAL_INT_STAGING's classification is INT and its identifier-generation policy is no longer empty. The table's policies remain identical to the value observed in Step 2 (verified via a follow-up GET). This is the same INT-immutability semantics that TC-111/TC-112 already prove for LOCAL Auto-ID tables in system-param-regression.spec.ts — this case re-proves it from the Customization governance entry point.","AC 8, Alt 4, Exception 4","","Table Registry","Not Automated"
+"TC-27","US-01.04.02 | Core & Local Artifact Governance","Component","API","Verify a LOCAL FIN table's policies accept a new Lead Company rule but block changes to an already-covered company","1) Table LOCAL_FIN_LEDGER_EXT is registered with origin = ""LOCAL"", classification = ""FIN"", group = {""id"": 1}, spaces = [""NAU"", ""LIV"", ""HIS""], and a policies list already containing one IDENTIFIER_GENERATION rule scoped to Lead Company COMPANY_A (SEQUENTIAL strategy, prefix ""{TABLE}-{YYDDD}-"", startValue 1000).
+
+2) Lead Companies COMPANY_A and COMPANY_UK are both registered and active in the COMPANY table.
+
+3) The Actor holds administrative MODIFY privileges for the Table Registry.","1) PUT {{table-registry-url}}/api/v1/tables/LOCAL_FIN_LEDGER_EXT — add a rule for the new, not-yet-covered company COMPANY_UK alongside the existing COMPANY_A rule
+
+2) GET {{table-registry-url}}/api/v1/tables/LOCAL_FIN_LEDGER_EXT
+
+3) PUT {{table-registry-url}}/api/v1/tables/LOCAL_FIN_LEDGER_EXT — attempt to change the already-covered COMPANY_A rule's strategy, resubmitting COMPANY_UK unchanged","1) {""group"":{""id"":1},""policies"":[{""type"":""IDENTIFIER_GENERATION"",""config"":{""rules"":[{""condition"":{""type"":""PREDICATE"",""key"":""context.company.id"",""operator"":""EQ"",""values"":[""COMPANY_A""]},""result"":{""isEnforced"":true,""prefix"":""{TABLE}-{YYDDD}-"",""maxLength"":40,""strategy"":{""type"":""SEQUENTIAL"",""config"":{""startValue"":1000}}}},{""condition"":{""type"":""PREDICATE"",""key"":""context.company.id"",""operator"":""EQ"",""values"":[""COMPANY_UK""]},""result"":{""isEnforced"":true,""prefix"":""UK-"",""maxLength"":40,""strategy"":{""type"":""HIGH_TPS_UNIQUE"",""config"":{""allowedCharacters"":""ABCDEFGHJKLMNPQRSTUVWXYZ23456789""}}}}]}}]}
+
+2) N/A — read-only GET, no request body.
+
+3) {""group"":{""id"":1},""policies"":[{""type"":""IDENTIFIER_GENERATION"",""config"":{""rules"":[{""condition"":{""type"":""PREDICATE"",""key"":""context.company.id"",""operator"":""EQ"",""values"":[""COMPANY_A""]},""result"":{""isEnforced"":true,""prefix"":""{TABLE}-{YYDDD}-"",""maxLength"":40,""strategy"":{""type"":""HIGH_TPS_UNIQUE"",""config"":{""allowedCharacters"":""ABCDEFGHJKLMNPQRSTUVWXYZ23456789""}}}},{""condition"":{""type"":""PREDICATE"",""key"":""context.company.id"",""operator"":""EQ"",""values"":[""COMPANY_UK""]},""result"":{""isEnforced"":true,""prefix"":""UK-"",""maxLength"":40,""strategy"":{""type"":""HIGH_TPS_UNIQUE"",""config"":{""allowedCharacters"":""ABCDEFGHJKLMNPQRSTUVWXYZ23456789""}}}}]}}]}","1) Response status code is 200. The system permits adding the COMPANY_UK rule because COMPANY_UK was not yet covered by any existing rule on LOCAL_FIN_LEDGER_EXT.
+
+2) Response status code is 200. policies[0].config.rules contains exactly 2 entries: the pre-existing COMPANY_A rule (SEQUENTIAL, unchanged) and the new COMPANY_UK rule (HIGH_TPS_UNIQUE).
+
+3) Response status code is 400. The system blocks the attempt because COMPANY_A is already covered by an existing rule. policies remain identical to the value observed in Step 2 — COMPANY_A's strategy is still SEQUENTIAL. This is the same FIN-additive/already-covered semantics that TC-110/TC-113 already prove for LOCAL Auto-ID tables in system-param-regression.spec.ts — this case re-proves it from the Customization governance entry point.","AC 8, Alt 4, Exception 4","","Table Registry","Not Automated"

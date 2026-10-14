@@ -1,0 +1,10 @@
+%%{init: {'themeVariables': {'fontSize': '22px'}}}%%
+flowchart LR
+    persona["Persona /<br/>command"]
+    cache[("Plugin cache<br/>read-only")]
+    agentic[("proj-ai-agentic<br/>docs/ + rules/")]
+    consuming[("Consuming repo")]
+
+    persona -- reads --> cache
+    persona -- "resolves,<br/>writes knowledge" --> agentic
+    persona -. "test code only" .-> consuming

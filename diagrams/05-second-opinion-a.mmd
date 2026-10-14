@@ -1,0 +1,16 @@
+%%{init: {'themeVariables': {'fontSize': '22px'}}}%%
+flowchart TB
+    subgraph rb["/review-board — cost ~ N"]
+        direction LR
+        rbtopic(["Topic"]) --> rbA["Persona A"] & rbB["Persona B"] & rbC["Persona C"]
+        rbA & rbB & rbC --> rbVerdict[["VERDICT"]]
+    end
+
+    subgraph orch["/team:orchestrator — Round 2 cost ~ N²"]
+        direction TB
+        r1["Round 1<br/>independent proposals"]
+        r2["Round 2<br/>everyone reviews<br/>everyone else"]
+        r3["Round 3<br/>author response<br/>(skippable)"]
+        r4["Round 4<br/>final decision"]
+        r1 --> r2 --> r3 --> r4
+    end

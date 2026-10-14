@@ -1,0 +1,60 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "gitlab": {
+      "command": "npx",
+      "args": ["-y", "@zereight/mcp-gitlab"],
+      "env": {
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "${GITLAB_TOKEN}",
+        "GITLAB_API_URL": "http://10.0.102.50/api/v4",
+        "GITLAB_READ_ONLY_MODE": "true"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    },
+    "allure-testops-native": {
+      "type": "http",
+      "url": "http://allure.proj.local:8090/api/mcp",
+      "headers": {
+        "Authorization": "api-token ${ALLURE_TOKEN}"
+      }
+    },
+    "allure-testops-custom": {
+      "command": "uv",
+      "args": ["run", "--directory", "${CLAUDE_PLUGIN_ROOT}/mcp-servers/allure-testops-custom",
+                "allure-testops-custom"],
+      "env": {
+        "ALLURE_URL": "http://allure.proj.local:8090",
+        "ALLURE_TOKEN": "${ALLURE_TOKEN}"
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "atlassian-innowise": {
+      "type": "http",
+      "url": "https://mcp.atlassian.com/v1/mcp/authv2"
+    },
+    "atlassian-bank": {
+      "type": "http",
+      "url": "https://mcp.atlassian.com/v1/mcp/authv2?connection=bank"
+    },
+    "mermaid-ai": {
+      "type": "sse",
+      "url": "https://mcp.mermaid.ai/sse"
+    },
+    "bluedot": {
+      "type": "http",
+      "url": "https://app.bluedothq.com/api/v1/mcp"
+    }
+  }
+}

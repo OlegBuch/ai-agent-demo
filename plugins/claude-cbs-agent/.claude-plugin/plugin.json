@@ -1,0 +1,6 @@
+{
+  "name": "claude-proj-agent",
+  "description": "Virtual QA/AQA team (Business Analyst, Solution Architect, AQA Lead, Senior Manual QA, Senior Full Stack AQA, Senior Code Style & Conventions Reviewer, Senior Change Justification Reviewer) plus an AI Architect meta-role that maintains this framework's own structure/roles/skills, plus a Project Manager role for personal HRM/timesheet logging assistance, plus requirement-analysis, Allure TestOps, local test-case, and test-automation-lifecycle slash commands. Built for the proj-test-automation (PKF-CBS) engagement: domain and tech-stack facts are read from this repo's docs, Jira and Confluence are read-only, and plugin usage is measured into docs/metrics/ (a /metrics command and a Stop hook).",
+  "version": "2.3.0",
+  "skills": ["./external_skills/"]
+}

@@ -1,0 +1,25 @@
+[project]
+name = "allure-testops-custom"
+version = "0.1.0"
+description = "Custom Allure TestOps MCP server for proj-ai-agentic - test-case group search plus launch/results/statistics tools"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+    "httpx>=0.27.0",
+]
+
+[project.scripts]
+allure-testops-custom = "allure_testops_custom.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/allure_testops_custom"]
+
+[dependency-groups]
+dev = ["pytest>=8.0.0", "pytest-asyncio>=0.24.0"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
