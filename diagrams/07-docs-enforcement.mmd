@@ -1,0 +1,20 @@
+%%{init: {'themeVariables': {'fontSize': '22px'}}}%%
+flowchart TD
+    Persona["Persona"] -- edits --> Product[("Consuming<br/>repo code")]
+    Product --> Track["closeout-track.ps1<br/>PostToolUse"]
+    Track -- "+1" --> Counter[("Session<br/>counter")]
+
+    Persona -- updates --> ModuleTheory[["module-theory/"]]
+    Persona -- updates --> CommonIssues[["common-issues/"]]
+    Persona -- updates --> FrameSpecs[["frame-specs/"]]
+    Persona -- "or acks" --> Ack["proj-closeout-ack"]
+
+    ModuleTheory --> Track
+    CommonIssues --> Track
+    FrameSpecs --> Track
+    Ack --> Track
+    Track -- reset --> Counter
+
+    Counter --> Check["closeout-check.ps1<br/>Stop, every turn"]
+    Check -- "= 0" --> Allow(["turn ends"])
+    Check -- "&gt; 0" --> Block(["blocked"])

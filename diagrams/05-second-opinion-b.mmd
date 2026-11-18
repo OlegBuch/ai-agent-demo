@@ -1,0 +1,13 @@
+%%{init: {'themeVariables': {'fontSize': '22px'}}}%%
+flowchart LR
+    subgraph fanout["Round 2 fan-out, N = 3 → 6 reviews"]
+        A["Proposal A"]
+        B["Proposal B"]
+        C["Proposal C"]
+        B -- reviews --> A
+        C -- reviews --> A
+        A -- reviews --> B
+        C -- reviews --> B
+        A -- reviews --> C
+        B -- reviews --> C
+    end

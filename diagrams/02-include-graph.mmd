@@ -1,0 +1,5 @@
+%%{init: {'themeVariables': {'fontSize': '22px'}}}%%
+flowchart LR
+    MRL["model-routing-levels.md"] -- "nested inside" --> MR["model-routing.md"]
+    MR -- "nested inside" --> BA["base-agent.md"]
+    MR -- "also included by" --> RPR["review-pr-commands"]

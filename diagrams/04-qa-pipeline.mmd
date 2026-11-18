@@ -1,0 +1,16 @@
+%%{init: {'themeVariables': {'fontSize': '22px'}}}%%
+flowchart TD
+    Ticket(["Ticket +<br/>Confluence"]) --> MQA["mqa-review-story"]
+    MQA -- writes --> Analysis[["analysis.md"]]
+    MQA --> Decision{{"Allure<br/>configured?"}}
+    Decision -- yes --> AllureCreate["allure-native-create-<br/>test-case"]
+    Decision -- "no, opt-in" --> LocalCreate["mqa-create-<br/>local-test-case"]
+    AllureCreate --> Cases[["Cases in<br/>Allure TestOps"]]
+    LocalCreate --> CasesLocal[["Cases as<br/>local .xlsx/.csv"]]
+    Cases --> Gate{{"Status =<br/>Approved?"}}
+    CasesLocal --> Gate
+    Gate -- approved --> AQA["aqa-automate"]
+    AQA -- "test code" --> Code[("Consuming repo<br/>api/, ui/")]
+
+    Code -.-> Maintain["aqa-review-test /<br/>update-test / delete-test"]
+    Maintain -. syncs .-> Cases

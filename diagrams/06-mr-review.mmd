@@ -1,0 +1,21 @@
+%%{init: {'themeVariables': {'fontSize': '22px'}}}%%
+flowchart TD
+    MR(["GitLab MR"]) --> Cosmetic["review-cosmetic-pr<br/>Code Style"]
+    MR --> Logical["review-logical-pr<br/>AQA + AQA Lead"]
+    Cosmetic --> CosmeticOut[["cosmetic_analysis.md"]]
+    Logical --> LogicalOut[["logical_analysis.md"]]
+    CosmeticOut --> Orch["review-pr-orchestrator"]
+    LogicalOut --> Orch
+    Orch --> Skeptic["Skeptic lens<br/>necessity challenge"]
+    Skeptic --> Final[["final_analysis.md +<br/>GitLab comment"]]
+    Final -. "after fixes pushed" .-> Recheck["review-pr-recheck"]
+    Recheck --> ReReview[["re-review-analysis.md"]]
+
+    subgraph internal["Inside each lens"]
+        Gather["Gather<br/>Haiku"]
+        Judge["Judge<br/>Sonnet"]
+        Escalate["Escalate<br/>Opus"]
+        Gather --> Judge --> Escalate
+    end
+
+    Logical -.-> internal

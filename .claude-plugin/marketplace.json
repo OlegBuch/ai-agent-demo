@@ -1,0 +1,13 @@
+{
+  "name": "proj-ai-agentic",
+  "owner": {
+    "name": "Innowise Group"
+  },
+  "plugins": [
+    {
+      "name": "claude-proj-agent",
+      "source": "./plugins/claude-proj-agent",
+      "description": "Claude Code virtual QA/AQA team for the proj-test-automation (PKF-CBS) engagement: personas, slash commands, and review workflows for requirement analysis, test design, and test automation."
+    }
+  ]
+}
